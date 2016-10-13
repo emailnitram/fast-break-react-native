@@ -4,22 +4,11 @@
  * @flow
  */
 
-import React, { Component } from 'react';
+import React from 'react';
 import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View
+  AppRegistry
 } from 'react-native';
 
 import Highlights from './Highlights';
 
-export default class fastBreak extends Component {
-  render() {
-    return (
-      <Highlights />
-    );
-  }
-}
-
-AppRegistry.registerComponent('fastBreak', () => fastBreak);
+AppRegistry.registerComponent('fastBreak', () => Highlights);
