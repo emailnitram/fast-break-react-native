@@ -31,15 +31,23 @@ export default class Highlight extends Component {
   componentDidMount() {
     global.fetch(`https://api.streamable.com/videos/${this.props.shortCode}`)
       .then(res => res.json())
-      .then(res => this.setState({
-        thumbnailUrl: `https:${res.thumbnail_url}`,
-        videoUrl: `https:${res.files['mp4-mobile'].url}`,
-        video: { 
-          width: res.files['mp4-mobile'].width,
-          height: res.files['mp4-mobile'].height,
-          duration: res.files['mp4-mobile'].duration
+      .then(res => {
+        let vidKey;
+        if(res.files.hasOwnProperty('mp4-mobile')) {
+          vidKey = 'mp4-mobile'
+        } else {
+          vidKey = 'mp4'
         }
-      }))
+        this.setState({
+          thumbnailUrl: `https:${res.thumbnail_url}`,
+          videoUrl: `https:${res.files[vidKey].url}`,
+          video: { 
+            width: res.files[vidKey].width,
+            height: res.files[vidKey].height,
+            duration: res.files[vidKey].duration
+          }
+        })
+      })
       .catch(error => this.setState({error: true}) );
   }
 
