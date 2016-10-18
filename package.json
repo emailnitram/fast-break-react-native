@@ -9,7 +9,8 @@
   "dependencies": {
     "react": "15.3.2",
     "react-native": "0.35.0",
-    "react-native-video-player": "^0.3.0"
+    "react-native-video-player": "^0.3.0",
+    "time-ago": "^0.1.0"
   },
   "jest": {
     "preset": "jest-react-native"

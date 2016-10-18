@@ -437,7 +437,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "fastBreak" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "FastBreak" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -740,7 +740,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_NAME = fastBreak;
+				PRODUCT_BUNDLE_IDENTIFIER = mh.FastBreak;
+				PRODUCT_NAME = FastBreak;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -765,7 +766,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_NAME = fastBreak;
+				PRODUCT_BUNDLE_IDENTIFIER = mh.FastBreak;
+				PRODUCT_NAME = FastBreak;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
@@ -881,7 +883,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "fastBreak" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "FastBreak" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
