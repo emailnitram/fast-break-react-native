@@ -2345,7 +2345,7 @@ inquirer@^0.12.0:
     strip-ansi "^3.0.0"
     through "^2.3.6"
 
-invariant@^2.2.0:
+invariant@^2.2.0, invariant@^2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.1.tgz#b097010547668c7e337028ebe816ebe36c8a8d54"
   dependencies:
@@ -3813,6 +3813,12 @@ react-clone-referenced-element@^1.0.1:
 react-deep-force-update@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/react-deep-force-update/-/react-deep-force-update-1.0.1.tgz#f911b5be1d2a6fe387507dd6e9a767aa2924b4c7"
+
+react-native-android-share:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/react-native-android-share/-/react-native-android-share-0.0.5.tgz#ef5efc77f9e4baf5da4505069bf7eb1d2e858788"
+  dependencies:
+    invariant "^2.2.1"
 
 react-native-vector-icons@^2.1.0:
   version "2.1.0"

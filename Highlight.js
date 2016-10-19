@@ -7,11 +7,13 @@ import {
   Image,
   ActivityIndicator,
   ActionSheetIOS,
-  TouchableHighlight
+  TouchableHighlight,
+  Platform
 } from 'react-native';
 
 import VideoPlayer from 'react-native-video-player';
 import timeAgo from 'time-ago';
+import AndroidShare from 'react-native-android-share';
 
 let ta = timeAgo();
 
@@ -52,20 +54,16 @@ export default class Highlight extends Component {
   }
 
   showShareActionSheet(shortCode) {
-    ActionSheetIOS.showShareActionSheetWithOptions({
-      url: `https://streamable.com/${shortCode}`,
-      message: this.props.title
-    },
-    (error) => alert(error),
-    (success, method) => {
-      var text;
-      if (success) {
-        text = `Shared via ${method}`;
-      } else {
-        text = 'You didn\'t share';
-      }
-      // this.setState({text});
-    });
+    if(Platform.OS === 'ios') {
+      ActionSheetIOS.showShareActionSheetWithOptions({
+        url: `https://streamable.com/${shortCode}`,
+        message: this.props.title
+      },
+      (error) => alert(error));
+    } else {
+      var object = {subject: this.props.title, text: `https://streamable.com/${shortCode}`};
+      AndroidShare.openChooserWithOptions(object, 'Share Highlight');
+    }
   };
 
   render() {
