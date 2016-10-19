@@ -56,16 +56,7 @@ export default class Highlight extends Component {
       url: `https://streamable.com/${shortCode}`,
       message: this.props.title
     },
-    (error) => alert(error),
-    (success, method) => {
-      var text;
-      if (success) {
-        text = `Shared via ${method}`;
-      } else {
-        text = 'You didn\'t share';
-      }
-      // this.setState({text});
-    });
+    (error) => alert(error));
   };
 
   render() {
@@ -79,11 +70,7 @@ export default class Highlight extends Component {
     }
 
     if(this.state.error) {
-      return (
-        <View>
-          <Text style={styles.title}>Error loading Video</Text>
-        </View>
-      )
+      return null;
     }
     return (
       <View style={styles.view}>
@@ -96,8 +83,7 @@ export default class Highlight extends Component {
             video={{ uri: this.state.videoUrl }}
             videoWidth={this.state.video.width}
             videoHeight={this.state.video.height}
-            duration={this.state.video.duration/* I'm using a hls stream here, react-native-video
-              can't figure out the length, so I pass it here from the vimeo config */}
+            duration={this.state.video.duration}
           />
         </View>
         <View style={styles.content}>
