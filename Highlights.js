@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import {
-  AppRegistry,
   StyleSheet,
   Text,
   Image,
   View,
   TouchableHighlight,
   ActivityIndicator,
-  StatusBar,
   ListView,
   RefreshControl,
   Platform
@@ -28,7 +26,8 @@ export default class Highlights extends Component {
       videoList: [],
       dataSource: ds.cloneWithRows([]),
       error: false,
-      refreshing: false
+      refreshing: false,
+      fetchInProgress: false
     };
   }
 
@@ -37,15 +36,24 @@ export default class Highlights extends Component {
   }
 
   _onRefresh() {
-    this.setState({refreshing: true, videoList: [], dataSource: ds.cloneWithRows([])});
-    this.callRedditApi();
+    this.callRedditApi('');
   }
 
   _retryLoad() {
-    this.callRedditApi();
+    this.setState({fetchInProgress: false});
+    this.callRedditApi('');
+  }
+
+  _loadMore() {
+    this.callRedditApi(this.state.after);
   }
 
   callRedditApi(after = '') {
+    if (this.state.fetchInProgress) {
+      return;
+    }
+
+    this.setState({fetchInProgress:true});
     fetch(`https://www.reddit.com/r/nba.json?after=${after}&raw_json=1`).then(resp => resp.json()).then(data => {
       let videos = data.data.children.filter(item => {
         let url = item.data.url;
@@ -60,16 +68,16 @@ export default class Highlights extends Component {
         return v.shortCode.length === 4;
       })
 
+      let vidList = after === '' ? [] : this.state.videoList;
+
       this.setState({
         after: data.data.after,
-        videoList: this.state.videoList.concat(vids),
-        dataSource: ds.cloneWithRows(this.state.videoList.concat(vids)),
+        videoList: vidList.concat(vids),
+        dataSource: ds.cloneWithRows(vidList.concat(vids)),
         refreshing: false,
-        error: false
+        error: false,
+        fetchInProgress: false
       })
-      if(this.state.videoList.length < 12) {
-        this.callRedditApi(this.state.after);
-      }
     })
     .catch(error => this.setState({error: true}));
   }
@@ -106,6 +114,18 @@ export default class Highlights extends Component {
             onRefresh={this._onRefresh.bind(this)}
           />
         }
+        renderFooter={() => {
+            if(!this.state.fetchInProgress) {
+              return null;
+            }
+            return (
+              <View style={[styles.centering, {height: 100}]}>
+                <ActivityIndicator />
+              </View>
+            ) 
+          }
+        }
+        onEndReached={this._loadMore.bind(this)}
         dataSource={this.state.dataSource}
         renderRow={(rowData) => <Highlight shortCode={rowData.shortCode} title={rowData.title} created_utc={rowData.created_utc}></Highlight>}
       />
