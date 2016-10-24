@@ -69,15 +69,19 @@ export default class Highlights extends Component {
       })
 
       let vidList = after === '' ? [] : this.state.videoList;
+      let videoList = vidList.concat(vids);
 
       this.setState({
         after: data.data.after,
-        videoList: vidList.concat(vids),
-        dataSource: ds.cloneWithRows(vidList.concat(vids)),
+        videoList: videoList,
+        dataSource: ds.cloneWithRows(videoList),
         refreshing: false,
         error: false,
         fetchInProgress: false
       })
+      if (videoList.length < 1) {
+        this.callRedditApi(data.data.after);
+      }
     })
     .catch(error => this.setState({error: true}));
   }
