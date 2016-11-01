@@ -3827,9 +3827,9 @@ react-native-vector-icons@^2.1.0:
     lodash "^4.0.0"
     yargs "^4.7.0"
 
-react-native-video-player:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/react-native-video-player/-/react-native-video-player-0.3.0.tgz#ef35d5d17dbbedcc748af7354df2ee35b2143187"
+react-native-video-player@0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/react-native-video-player/-/react-native-video-player-0.4.0.tgz#84eea1338f4a46b749c8e3bd3dc612b447cc2129"
   dependencies:
     react "^15.0.0"
     react-native "*"

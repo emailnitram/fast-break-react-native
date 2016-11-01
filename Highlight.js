@@ -92,6 +92,7 @@ export default class Highlight extends Component {
             videoWidth={this.state.video.width}
             videoHeight={this.state.video.height}
             duration={this.state.video.duration}
+            endWithThumbnail={true}
           />
         </View>
         <View style={styles.content}>
