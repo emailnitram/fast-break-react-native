@@ -14,6 +14,7 @@ import {
 import VideoPlayer from 'react-native-video-player';
 import timeAgo from 'time-ago';
 import AndroidShare from 'react-native-android-share';
+import blobUtil from 'blob-util';
 
 let ta = timeAgo();
 
@@ -54,17 +55,27 @@ export default class Highlight extends Component {
   }
 
   showShareActionSheet(shortCode) {
-    if(Platform.OS === 'ios') {
-      ActionSheetIOS.showShareActionSheetWithOptions({
-        url: `https://streamable.com/${shortCode}`,
-        message: this.props.title
-      },
-      (error) => alert(error),
-      (success, method) => {});
-    } else {
-      let object = {subject: this.props.title, text: `https://streamable.com/${shortCode}`};
-      AndroidShare.openChooserWithOptions(object, 'Share Highlight');
-    }
+    global.fetch(this.state.videoUrl)
+    .then(res => res.blob())
+    .then(res => {
+      if(Platform.OS === 'ios') {
+        blobUtil.blobToBase64String(res).then(function (base64String) {
+          // success
+          ActionSheetIOS.showShareActionSheetWithOptions({
+            url: base64String,
+            message: this.props.title
+          },
+          (error) => alert(error),
+          (success, method) => {});
+        }).catch(function (err) {
+          // error
+          return false;
+        });
+      } else {
+        let object = {subject: this.props.title, text: `https://streamable.com/${shortCode}`};
+        AndroidShare.openChooserWithOptions(object, 'Share Highlight');
+      }
+    })
   };
 
   render() {
