@@ -21,13 +21,14 @@ export default class Highlights extends Component {
   constructor() {
     super();
 
+    this.after = '';
+    this.refreshing = false;
+    this.fetchInProgress = false;
+    this.videoList = [];
+
     this.state = {
-      after: '',
-      videoList: [],
       dataSource: ds.cloneWithRows([]),
-      error: false,
-      refreshing: false,
-      fetchInProgress: false
+      error: false
     };
   }
 
@@ -36,24 +37,25 @@ export default class Highlights extends Component {
   }
 
   _onRefresh() {
+    this.refreshing = true;
     this.callRedditApi('');
   }
 
   _retryLoad() {
-    this.setState({fetchInProgress: false});
+    this.fetchInProgress = false;
     this.callRedditApi('');
   }
 
   _loadMore() {
-    this.callRedditApi(this.state.after);
+    this.callRedditApi(this.after);
   }
 
   callRedditApi(after = '') {
-    if (this.state.fetchInProgress) {
+    if (this.fetchInProgress) {
       return;
     }
 
-    this.setState({fetchInProgress:true});
+    this.fetchInProgress = true;
     fetch(`https://www.reddit.com/r/nba.json?after=${after}&raw_json=1`).then(resp => resp.json()).then(data => {
       let videos = data.data.children.filter(item => {
         let url = item.data.url;
@@ -68,16 +70,17 @@ export default class Highlights extends Component {
         return v.shortCode.length === 4;
       })
 
-      let vidList = after === '' ? [] : this.state.videoList;
+      let vidList = after === '' ? [] : this.videoList;
       let videoList = vidList.concat(vids);
 
+      this.after = data.data.after
+      this.refreshing = false;
+      this.fetchInProgress = false;
+      this.videoList = videoList;
+
       this.setState({
-        after: data.data.after,
-        videoList: videoList,
         dataSource: ds.cloneWithRows(videoList),
-        refreshing: false,
-        error: false,
-        fetchInProgress: false
+        error: false
       })
       if (videoList.length < 1) {
         this.callRedditApi(data.data.after);
@@ -100,7 +103,7 @@ export default class Highlights extends Component {
         </View>
       )
     }
-    if(this.state.videoList.length === 0) {
+    if(this.videoList.length === 0) {
       return (
         <View style={[styles.centering, {transform: [{scale: 1.5}]}]}>
           <ActivityIndicator />
@@ -114,14 +117,11 @@ export default class Highlights extends Component {
         enableEmptySections={true}
         refreshControl={
           <RefreshControl
-            refreshing={this.state.refreshing}
+            refreshing={this.refreshing}
             onRefresh={this._onRefresh.bind(this)}
           />
         }
         renderFooter={() => {
-            if(!this.state.fetchInProgress) {
-              return null;
-            }
             return (
               <View style={[styles.centering, {height: 100}]}>
                 <ActivityIndicator />

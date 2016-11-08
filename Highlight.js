@@ -62,7 +62,7 @@ export default class Highlight extends Component {
       (error) => alert(error),
       (success, method) => {});
     } else {
-      let object = {subject: this.props.title, text: `https://streamable.com/${shortCode}`};
+      let object = {subject: this.props.title, text: `${this.props.title} - https://streamable.com/${shortCode}`};
       AndroidShare.openChooserWithOptions(object, 'Share Highlight');
     }
   };
