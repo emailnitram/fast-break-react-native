@@ -8,11 +8,13 @@ import {
   ActivityIndicator,
   ListView,
   RefreshControl,
+  TextInput,
   Platform
 } from 'react-native';
 
 import VideoPlayer from 'react-native-video-player';
 import Highlight from './Highlight';
+import debounce from 'debounce';
 
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
@@ -25,10 +27,19 @@ export default class Highlights extends Component {
     this.refreshing = false;
     this.fetchInProgress = false;
     this.videoList = [];
+    this.searchMode = false;
+    this.searchQuery = '';
+    this.searchCall = debounce(() => {
+      if(!this.fetchInProgress){
+        this.setState({dataSource: ds.cloneWithRows([])})
+      }
+      this.callRedditApi('', this.searchQuery);
+    }, 1000);
 
     this.state = {
       dataSource: ds.cloneWithRows([]),
-      error: false
+      error: false,
+      firstLoadComplete: false
     };
   }
 
@@ -37,7 +48,9 @@ export default class Highlights extends Component {
   }
 
   _onRefresh() {
+    this.setState({firstLoadComplete: false});
     this.refreshing = true;
+    this.searchMode = false;
     this.callRedditApi('');
   }
 
@@ -47,16 +60,26 @@ export default class Highlights extends Component {
   }
 
   _loadMore() {
-    this.callRedditApi(this.after);
+    if(this.after === null) {
+      return;
+    }
+    this.callRedditApi(this.after, this.searchQuery);
   }
 
-  callRedditApi(after = '') {
+  callRedditApi(after = '', query = '') {
     if (this.fetchInProgress) {
       return;
     }
 
+    let url;
+    if(this.searchMode) {
+      url = `https://www.reddit.com/r/nba/search.json?q=${query}+site%3Astreamable.com&restrict_sr=on&sort=new&t=all&after=${after}&raw_json=1`
+    } else {
+      url = `https://www.reddit.com/r/nba.json?after=${after}&raw_json=1`
+    }
+
     this.fetchInProgress = true;
-    fetch(`https://www.reddit.com/r/nba.json?after=${after}&raw_json=1`).then(resp => resp.json()).then(data => {
+    fetch(url).then(resp => resp.json()).then(data => {
       let videos = data.data.children.filter(item => {
         let url = item.data.url;
         return url.match(/streamable/)
@@ -80,13 +103,23 @@ export default class Highlights extends Component {
 
       this.setState({
         dataSource: ds.cloneWithRows(videoList),
-        error: false
+        error: false,
+        firstLoadComplete: true
       })
+      if(after === null && query !== ''){
+        return;
+      }
       if (videoList.length < 1) {
-        this.callRedditApi(data.data.after);
+        this.callRedditApi(data.data.after, query);
       }
     })
     .catch(error => this.setState({error: true}));
+  }
+
+  filterResults(q) {
+    this.searchMode = q === '' ? false : true;
+    this.searchQuery = q;
+    this.searchCall();
   }
 
   render() {
@@ -103,7 +136,7 @@ export default class Highlights extends Component {
         </View>
       )
     }
-    if(this.videoList.length === 0) {
+    if(!this.state.firstLoadComplete) {
       return (
         <View style={[styles.centering, {transform: [{scale: 1.5}]}]}>
           <ActivityIndicator />
@@ -120,6 +153,16 @@ export default class Highlights extends Component {
             refreshing={this.refreshing}
             onRefresh={this._onRefresh.bind(this)}
           />
+        }
+        renderHeader={() => {
+            return (
+              <TextInput
+                style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+                onChangeText={(text) => this.filterResults(text)}
+                placeholder="Search"
+              />
+            )
+          }
         }
         renderFooter={() => {
             return (
