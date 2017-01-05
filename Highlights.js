@@ -157,7 +157,7 @@ export default class Highlights extends Component {
         renderHeader={() => {
             return (
               <TextInput
-                style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+                style={{height: 40, borderColor: 'gray', borderWidth: 1, paddingLeft: 5}}
                 onChangeText={(text) => this.filterResults(text)}
                 placeholder="Search"
               />
