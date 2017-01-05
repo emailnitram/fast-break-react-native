@@ -89,9 +89,9 @@ export default class Highlights extends Component {
         return { shortCode: v.data.url.split('/')[3], title: v.data.title, created_utc: v.data.created_utc }
       })
 
-      vids = vids.filter((v) => {
-        return v.shortCode.length === 4;
-      })
+      // vids = vids.filter((v) => {
+        // return v.shortCode.length === 4;
+      // })
 
       let vidList = after === '' ? [] : this.videoList;
       let videoList = vidList.concat(vids);
